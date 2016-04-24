@@ -43,10 +43,14 @@ class PokemonData implements SingleParser
     }
 
     /**
-     * @return PokemonAbility
+     * @return PokemonAbility|MegaEvolution
      */
     public function getAbility() {
-        return $this->versionParser->getEntry('PokemonAbility', $this->abilityIndex);
+        if ($this->isPokemon()) {
+            return $this->versionParser->getEntry('PokemonAbility', $this->abilityIndex);
+        } else if ($this->isMegaEvolution()) {
+            return $this->versionParser->getEntry('MegaEvolution', $this->abilityIndex);
+        }
     }
 
     private function parseV10($line)
@@ -71,6 +75,28 @@ class PokemonData implements SingleParser
         }
     }
 
+    private function parseV13($line)
+    {
+        $this->dexNumber = readBits($line, 0, 0, 10);
+        $this->typeIndex = readBits($line, 1, 3, 5);
+        $this->abilityIndex = readBits($line, 2, 0, 7);
+        $this->growthId = readBits($line, 3, 0, 4);
+        $this->nameIndex = readBits($line, 6, 5, 11);
+        if ($this->formeNameIndex = readBits($line, 8, 0, 8)) {
+            $this->formeNameIndex += 768;
+        }
+        $this->class = readBits($line, 9, 4, 3);
+        $this->megaEvolutionIcons = readBits($line, 10, 0, 7);
+        $this->speedups = readBits($line, 10, 7, 7);
+
+        if ($mega = readBits($line, 12, 0, 11)) {
+            $this->megaIndexes[] = $mega;
+        }
+        if ($mega = readBits($line, 13, 3, 11)) {
+            $this->megaIndexes[] = $mega;
+        }
+    }
+
     public function isPokemon()
     {
         return $this->class == 0;
@@ -86,5 +112,10 @@ class PokemonData implements SingleParser
 
     public function getAP($levelIndex=0) {
         return PokemonAttack::getAP($this->versionParser, $this->growthId, $levelIndex);
+    }
+
+    public function isMegaEvolution()
+    {
+        return $this->class == 2;
     }
 }
