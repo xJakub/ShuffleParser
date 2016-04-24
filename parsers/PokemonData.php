@@ -42,8 +42,11 @@ class PokemonData implements SingleParser
             : '';
     }
 
+    /**
+     * @return PokemonAbility
+     */
     public function getAbility() {
-        return new PokemonAbility($this->versionParser, $this->abilityIndex);
+        return $this->versionParser->getEntry('PokemonAbility', $this->abilityIndex);
     }
 
     private function parseV10($line)
@@ -71,5 +74,17 @@ class PokemonData implements SingleParser
     public function isPokemon()
     {
         return $this->class == 0;
+    }
+
+    /**
+     * @return PokemonType
+     */
+    public function getType()
+    {
+        return $this->versionParser->getEntry('PokemonType', $this->typeIndex);
+    }
+
+    public function getAP($levelIndex=0) {
+        return PokemonAttack::getAP($this->versionParser, $this->growthId, $levelIndex);
     }
 }

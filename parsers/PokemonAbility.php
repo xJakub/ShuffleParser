@@ -57,7 +57,7 @@ class PokemonAbility implements SingleParser
     }
 
     public function isDamage() {
-        return $this->type = 0;
+        return $this->type == 0;
     }
     public function isOther() {
         return $this->type == 1;
@@ -70,6 +70,6 @@ class PokemonAbility implements SingleParser
         return $this->versionParser->getMessage("messagePokedex_{$lang}", $this->nameIndex);
     }
     function getDescription($lang='US') {
-        return $this->versionParser->getMessage("messagePokedex_{$lang}", $this->descIndex);
+        return $this->versionParser->getMessage("messagePokedex_{$lang}", $this->descIndex, ' ');
     }
 }

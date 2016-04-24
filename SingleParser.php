@@ -10,5 +10,5 @@ namespace ShuffleParser;
  */
 interface SingleParser
 {
-    public function __construct(VersionParser $parser, $index);
+    public function __construct(VersionParser $versionParser, $index);
 }

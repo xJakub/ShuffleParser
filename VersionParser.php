@@ -11,6 +11,7 @@ class VersionParser
 {
     private $cache = [];
     private $messageCache = [];
+    private $entryCache = [];
     private $version = "";
     private $dirs;
 
@@ -43,11 +44,37 @@ class VersionParser
         return count($this->cache[$folder]);
     }
 
-    function getMessage($folder, $index)
+    function getEntry($folder, $index) {
+        $className = "ShuffleParser\\{$folder}";
+        if (!isset($this->entryCache[$folder][$index])) {
+            $this->entryCache[$folder][$index] = new $className($this, $index);
+        }
+        return $this->entryCache[$folder][$index];
+    }
+
+    function getAllEntries($folder) {
+        $count = $this->getLinesCount($folder);
+        $className = "ShuffleParser\\{$folder}";
+        for ($i=0; $i<$count; $i++) {
+            if (!isset($this->entryCache[$folder][$i])) {
+                $this->entryCache[$folder][$i] = new $className($this, $i);
+            }
+        }
+        ksort($this->entryCache[$folder]);
+        return $this->entryCache[$folder];
+    }
+
+    function getMessage($folder, $index, $ln=null)
     {
         if (!isset($this->messageCache[$folder])) {
             $this->messageCache[$folder] = readTextsFromFile(findFile($this->dirs, 'messages/'.$folder.'.txt'));
         }
-        return $this->messageCache[$folder][$index];
+
+        $message = $this->messageCache[$folder][$index];
+        if ($ln === null) {
+            return $message;
+        } else {
+            return str_replace('\n', $ln, $message);
+        }
     }
 }
