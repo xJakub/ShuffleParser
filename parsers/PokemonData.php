@@ -42,6 +42,15 @@ class PokemonData implements SingleParser
             : '';
     }
 
+    public function getFullName($lang='US') {
+        if ($this->getFormeName()) {
+            $name = "{$this->getName($lang)} ({$this->getFormeName($lang)})";
+        } else {
+            $name = "{$this->getName($lang)}";
+        }
+        return $name;
+    }
+
     /**
      * @return PokemonAbility|MegaEvolution
      */

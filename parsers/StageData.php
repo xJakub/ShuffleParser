@@ -79,4 +79,32 @@ class StageData implements SingleParser
     {
         return $this->versionParser->getEntry('PokemonData', $this->pokemonIndex);
     }
+
+    /**
+     * @return PokemonData[]
+     */
+    public function getDefaultSupportPokemon() {
+        $extraPokemonCount = max(0, $this->skyfallCount-4);
+        /** @var PokemonSet $defaultSet */
+        $defaultSet = $this->versionParser->getEntry('PokemonSet', $this->defaultSetIndex);
+        $result = [];
+        for ($i=$extraPokemonCount; $i<$this->skyfallCount; $i++) {
+            $result[] = $defaultSet->getPokemon($i);
+        }
+        return $result;
+    }
+
+    /**
+     * @return PokemonData[]
+     */
+    public function getExtraPokemon() {
+        $extraPokemonCount = max(0, $this->skyfallCount-4);
+        /** @var PokemonSet $defaultSet */
+        $defaultSet = $this->versionParser->getEntry('PokemonSet', $this->defaultSetIndex);
+        $result = [];
+        for ($i=0; $i<$extraPokemonCount; $i++) {
+            $result[] = $defaultSet->getPokemon($i);
+        }
+        return $result;
+    }
 }
